@@ -1,3 +1,4 @@
-from queryprocessor.queryprocessor import *
+from queryprocessor.queryprocessor import QueryProcessor
 
-read_config('../config/PC.CFG')
+qp = QueryProcessor('../config/PC.CFG')
+qp.generate_consultas()
