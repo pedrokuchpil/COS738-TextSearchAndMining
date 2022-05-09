@@ -1,4 +1,5 @@
 from invertedlistgenerator import InvertedListGenerator
+from indexer import Indexer
 
-ilg = InvertedListGenerator('../config/GLI.CFG')
-ilg.generate_escreva()
+ind = Indexer('../config/INDEX.CFG')
+print(ind.generate_tf())

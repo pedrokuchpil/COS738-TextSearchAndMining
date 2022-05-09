@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 class Record():
     def __init__(self, r):
-        self.recordnum = r.find('RECORDNUM').text
+        self.recordnum = r.find('RECORDNUM').text.replace(' ','')
         try:
             self.abstract = r.find('ABSTRACT').text
         except AttributeError:
