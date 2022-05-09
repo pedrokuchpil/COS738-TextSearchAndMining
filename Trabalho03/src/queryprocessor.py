@@ -5,7 +5,7 @@ from xml.etree import ElementTree as ET
 class Query:
     def __init__(self, q):
         self.number = q.find('QueryNumber').text
-        self.text = re.sub("[^a-zA-Z] ", "", q.find('QueryText').text).replace('\n', ' ').upper().replace(';', '')
+        self.text = re.sub("[^a-zA-Z] ", "", q.find('QueryText').text).replace('\n', ' ').upper()
         self.results = q.find('Results').text
         self.records = {}
         for i in q.iter('Item'):

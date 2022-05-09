@@ -1,5 +1,4 @@
-from queryprocessor.queryprocessor import QueryProcessor
+from invertedlistgenerator import InvertedListGenerator
 
-qp = QueryProcessor('../config/PC.CFG')
-qp.generate_consultas()
-qp.generate_esperados()
+ilg = InvertedListGenerator('../config/GLI.CFG')
+ilg.generate_escreva()
