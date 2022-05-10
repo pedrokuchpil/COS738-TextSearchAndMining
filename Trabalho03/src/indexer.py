@@ -1,38 +1,60 @@
 from operator import invert
 import os
 import re
+import math
+
+def invert_tf(tf):
+    itf = {}
+    for doc, words in tf.items():
+        for word in words:
+            if word not in itf:
+                itf[word] = {}
+            try:
+                itf[word][doc] = tf[doc][word]
+            except:
+                itf[word][doc] = {}
+    return itf
 
 class Indexer():
     def __init__(self, file):
-        self.leia_path = ''
-        self.escreva_path = ''
+        self.__leia_path = ''
+        self.__escreva_path = ''
+        self.tf = {}
+        self.idf = {}
         with open(file, 'r', encoding='utf-8') as f:
             for line in f:
                 if ('LEIA' in line):
-                    self.leia_path = line.partition('=')[2].rstrip()
+                    self.__leia_path = line.partition('=')[2].rstrip()
                 elif ('ESCREVA' in line):
-                    self.escreva_path = line.partition('=')[2].rstrip()
+                    self.__escreva_path = line.partition('=')[2].rstrip()
 
     def generate_tf(self):
-        with open(self.leia_path, 'r', encoding='utf-8') as inverted:
+        with open(self.__leia_path, 'r', encoding='utf-8') as inverted:
             next(inverted)
             inverted_list = {}
             for line in inverted:
                 word = re.sub('[^A-Z]', '', line.partition(';')[0].rstrip().upper())
-                docs = line.rstrip('\n').partition(';')[2].lstrip('[').rstrip(']').split(',')
+                docs = re.sub('[^\d/g,]', '', line.partition(';')[2]).replace('\n', '').split(',')
                 if (len(word) > 2):
                     inverted_list[word] = docs
                 
         tf = {}
-        for key, value in inverted_list.items():
-            for doc in value:
+        for word, documents in inverted_list.items():
+            for doc in documents:
                 if (doc not in tf):
                     tf[doc] = {}
-                elif key not in tf[doc]:
-                    tf[doc][key] = 1
-                else:
-                    tf[doc][key] += 1
-        return tf
+                try:
+                    tf[doc][word] += 1
+                except:
+                    tf[doc][word] = 1
+        self.tf = tf
 
-    #def generate_itf(tf):
+    def generate_idf(self):
+        idf = {}
+        itf = invert_tf(self.tf)
+        for word in itf:
+            idf[word] = math.log(len(self.tf)/len(itf[word]))
+        self.idf = idf        
+
+
         

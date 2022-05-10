@@ -2,4 +2,7 @@ from invertedlistgenerator import InvertedListGenerator
 from indexer import Indexer
 
 ind = Indexer('../config/INDEX.CFG')
-print(ind.generate_tf())
+#ind.generate_tf()
+#ind.generate_idf()
+ind.tf_idf()
+print(ind.idf)
