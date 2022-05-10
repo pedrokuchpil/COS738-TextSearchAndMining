@@ -2,6 +2,7 @@ from operator import invert
 import os
 import re
 import math
+import json
 
 def invert_tf(tf):
     itf = {}
@@ -19,8 +20,6 @@ class Indexer():
     def __init__(self, file):
         self.__leia_path = ''
         self.__escreva_path = ''
-        self.tf = {}
-        self.idf = {}
         with open(file, 'r', encoding='utf-8') as f:
             for line in f:
                 if ('LEIA' in line):
@@ -56,5 +55,24 @@ class Indexer():
             idf[word] = math.log(len(self.tf)/len(itf[word]))
         self.idf = idf        
 
+    def tf_idf(self):
+        self.generate_tf()
+        self.generate_idf()
+        tf_idf = {}
+        for doc, words in self.tf.items():
+            for word in words:
+                if doc not in tf_idf:
+                    tf_idf[doc] = {}
+                try:
+                    tf_idf[doc][word] = self.tf[doc][word] * self.idf[word]
+                except:
+                    tf_idf[doc][word] = 0
 
+        return tf_idf
+
+    def to_json(self):
+        tf_idf = self.tf_idf()
+        with open('../results/tf_idf.json', 'w', encoding='utf-8') as f:
+            json.dump(tf_idf, f)
         
+    

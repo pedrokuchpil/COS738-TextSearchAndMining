@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 
-class Record():
+class Record:
     def __init__(self, r):
         self.recordnum = r.find('RECORDNUM').text.replace(' ','')
         try:
