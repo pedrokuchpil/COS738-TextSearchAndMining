@@ -38,7 +38,7 @@ class InvertedListGenerator:
         stop_words = set(stopwords.words('english'))
         dict = {}
         for record in self.record_object_list:
-            text = re.sub('[^a-zA-Z\s]', ' ', record.abstract).replace('\n', ' ').upper()
+            text = re.sub('[^a-zA-Z\s]', ' ', record.abstract.replace('\n', ' ')).upper()
             word_tokens = word_tokenize(text)
             filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words and len(w) > 2]
 
