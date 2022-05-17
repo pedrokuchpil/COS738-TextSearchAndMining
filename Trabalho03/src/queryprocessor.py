@@ -1,11 +1,16 @@
 import os
 import re
 from xml.etree import ElementTree as ET
+from nltk.stem import *
+
+stemmer = PorterStemmer()
 
 class Query:
-    def __init__(self, q):
+    def __init__(self, q, control):
         self.number = q.find('QueryNumber').text
         self.text = re.sub("[^a-zA-Z] ", " ", q.find('QueryText').text).upper().replace('\n', '')
+        if control:
+            self.text = ' '.join([stemmer.stem(word) for word in self.text.split(" ")]).upper()
         self.text = ' '.join(self.text.split())
         self.results = q.find('Results').text
         self.records = {}
@@ -14,17 +19,20 @@ class Query:
 
 class QueryProcessor:
     def __init__(self, file):
+        self.stem = False
         self.query_object_list = []
         self.leia_path = ''
         self.consultas_path = ''
         self.esperados_path = ''
         with open(file, 'r', encoding='utf-8') as f:
             for line in f:
+                if (line.strip('\n ') == 'STEMMER'):
+                    self.stem = True
                 if ('LEIA' in line):
                     self.leia_path = line.partition('=')[2].rstrip()
                     doc = ET.parse(self.leia_path).getroot()
                     for q in doc.findall('QUERY'):
-                        self.query_object_list.append(Query(q))
+                        self.query_object_list.append(Query(q, self.stem))
                 elif ('CONSULTAS' in line):
                     self.consultas_path = line.partition('=')[2].rstrip()
                 elif ('ESPERADOS' in line):
