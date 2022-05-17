@@ -14,5 +14,6 @@ ilg.generate_escreva()
 ind = Indexer('../config/INDEX.CFG')
 ind.to_json()
 
-sea = Searcher('../config/BUSCA.CFG')
+stem = ilg.stem and qp.stem
+sea = Searcher('../config/BUSCA.CFG', stem)
 sea.run_searches()

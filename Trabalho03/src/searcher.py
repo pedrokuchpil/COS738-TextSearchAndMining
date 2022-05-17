@@ -69,7 +69,7 @@ def cos_similarity(tf_idf1, tf_idf2):
 
 class Searcher:
 
-    def __init__(self, file):
+    def __init__(self, file, stem):
             self.__modelo_path = ''
             self.__consultas_path = ''
             self.__resultados_path = ''
@@ -82,6 +82,11 @@ class Searcher:
                         self.__consultas_path = line.partition('=')[2].rstrip()
                     elif ('RESULTADOS' in line):
                         self.__resultados_path = line.partition('=')[2].rstrip()
+            
+            if stem:
+                self.__resultados_path = self.__resultados_path.rpartition('.')[0] + '-stemmer.csv'
+            else:
+                self.__resultados_path = self.__resultados_path.rpartition('.')[0] + '-nostemmer.csv'
             
             with open(self.__modelo_path, encoding='utf-8') as json_file:
                 self.model_tf_idf = json.load(json_file)
