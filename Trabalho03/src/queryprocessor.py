@@ -28,7 +28,7 @@ class QueryProcessor:
             for line in f:
                 if (line.strip('\n ') == 'STEMMER'):
                     self.stem = True
-                if ('LEIA' in line):
+                elif ('LEIA' in line):
                     self.leia_path = line.partition('=')[2].rstrip()
                     doc = ET.parse(self.leia_path).getroot()
                     for q in doc.findall('QUERY'):

@@ -3,10 +3,12 @@ import re
 from xml.etree import ElementTree as ET
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import *
 
+stemmer = PorterStemmer()
 
 class Record:
-    def __init__(self, r):
+    def __init__(self, r, stem):
         self.recordnum = r.find('RECORDNUM').text.replace(' ','')
         try:
             self.abstract = r.find('ABSTRACT').text
@@ -14,8 +16,10 @@ class Record:
             try:
                 self.abstract = r.find('EXTRACT').text
             except AttributeError:
-                print('NÃO FOI POSSÍVEL ABRIR' + self.recordnum)
+                print('NÃO FOI POSSÍVEL ABRIR ' + self.recordnum + ': Não possui ABSTRACT ou EXTRACT')
                 self.abstract = ' '
+        if stem:
+                self.abstract = ' '.join([stemmer.stem(word) for word in self.abstract.split(" ")]).upper()
 
 
 class InvertedListGenerator:
@@ -23,16 +27,19 @@ class InvertedListGenerator:
         self.record_object_list = []
         self.leia_path = []
         self.escreva_path = ''
+        self.stem = False
         with open(file, 'r', encoding='utf-8') as f:
             for line in f:
-                if ('LEIA' in line):
+                if (line.strip('\n ') == 'STEMMER'):
+                    self.stem = True
+                elif ('LEIA' in line):
                     self.leia_path.append(line.partition('=')[2].rstrip())
                 elif ('ESCREVA' in line):
                     self.escreva_path = line.partition('=')[2].rstrip()
         for file in self.leia_path:
             doc = ET.parse(file).getroot()
             for r in doc.findall('RECORD'):
-                self.record_object_list.append(Record(r))
+                self.record_object_list.append(Record(r, self.stem))
         
     def generate_escreva(self):
         stop_words = set(stopwords.words('english'))
