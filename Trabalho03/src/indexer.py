@@ -72,7 +72,7 @@ class Indexer():
 
     def to_json(self):
         tf_idf = self.tf_idf()
-        with open('../results/tf_idf.json', 'w', encoding='utf-8') as f:
+        with open(self.__escreva_path, 'w', encoding='utf-8') as f:
             json.dump(tf_idf, f)
         
     
