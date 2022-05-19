@@ -20,3 +20,4 @@ sea = Searcher('../config/BUSCA.CFG', stem)
 sea.run_searches()
 
 eva = Evaluator('../results/resultados-stemmer.csv', '../results/esperados.csv')
+eva.generate_measures()
