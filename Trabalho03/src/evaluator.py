@@ -1,12 +1,12 @@
-from email.encoders import encode_noop
 import json
+from ordered_set import OrderedSet
+
 def to_set(results, limit):
-    s = set()
+    s = OrderedSet()
     for result in results:
         if result[2] > limit:
             s.add(result[1])
     return s
-
 
 def precision(results, expecteds):
     if len(results) == 0:
@@ -24,6 +24,9 @@ def f1_score(precision, recall):
     if (precision + recall) == 0:
         return 0
     return 2 * precision * recall / (precision + recall)
+
+def precision_k(results, expecteds, k):
+    return precision (results[:k-1], expecteds[:k-1])
 
 
 class Evaluator:
@@ -71,3 +74,7 @@ class Evaluator:
             print ('Recall: ' + str(r))
             f1 = f1_score(p, r)
             print ('F1: ' + str(f1))
+            p5 = precision_k(results_set, expecteds_set, 5)
+            print ('P@5: ' + str(p5))
+            p10 = precision_k(results_set, expecteds_set, 10)
+            print ('P@10: ' + str(p10))
