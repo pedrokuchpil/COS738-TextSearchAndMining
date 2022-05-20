@@ -9,15 +9,21 @@ def to_set(results, limit):
 
 
 def precision(results, expecteds):
-    if len(results) > 0:
-        value = len(results & expecteds) / len(results)
-    else:
-        value = 0
+    if len(results) == 0:
+        return 0
+    value = len(results & expecteds) / len(results)
     return value
 
 def recall(results, expecteds):
+    if len(expecteds) == 0:
+        return 0
     value = len(results & expecteds) / len(expecteds)
     return value
+
+def f1_score(precision, recall):
+    if (precision + recall) == 0:
+        return 0
+    return 2 * precision * recall / (precision + recall)
 
 
 class Evaluator:
@@ -34,7 +40,7 @@ class Evaluator:
                 if key not in self.__results:
                     self.__results[key] = []
                 self.__results[key].append(list(map(float,(line.partition(';')[2].replace(']', '').replace('[', '').replace('\n', '').replace("'", "").split(', ')))))
-
+        
         with open (self.__expecteds_file, 'r', encoding='utf-8') as ef:
             next(ef)
             for line in ef:
@@ -50,7 +56,7 @@ class Evaluator:
                 e.insert(0, cont)
                 self.__expecteds[key][cont-1] = list(map(float, e))
                 cont += 1
-
+        
         with open('expected.json', 'w', encoding='utf-8') as f:
             json.dump(self.__expecteds, f)
         
@@ -59,4 +65,9 @@ class Evaluator:
             results_set = to_set(self.__results[key], 0.1)
             expecteds_set = to_set(self.__expecteds[key], 0.1)
             print(key)
-            print ('Precisão: ' + str(precision(results_set, expecteds_set)))
+            p = precision(results_set, expecteds_set)
+            print ('Precisão: ' + str(p))
+            r = recall(results_set, expecteds_set)
+            print ('Recall: ' + str(r))
+            f1 = f1_score(p, r)
+            print ('F1: ' + str(f1))
